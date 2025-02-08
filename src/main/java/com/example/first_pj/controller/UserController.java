@@ -4,36 +4,34 @@ import com.example.first_pj.dto.ApiResponse;
 import com.example.first_pj.dto.request.UserCreationRequest;
 import com.example.first_pj.dto.request.UserUpdateRequest;
 import com.example.first_pj.dto.response.UserResponse;
-import com.example.first_pj.exception.AppException;
-import com.example.first_pj.exception.ErrorCode;
-import com.example.first_pj.mapper.UserMapper;
-import com.example.first_pj.repository.UserRepository;
+
 import com.example.first_pj.service.UserService;
 import com.example.first_pj.Entity.User;
-    import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/users")
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Slf4j
 public class UserController {
-    private final UserRepository userRepository;
-    private final UserMapper userMapper;
-    private UserService userService;
-    @Autowired
-     UserController(UserService userService, UserRepository userRepository, UserMapper userMapper) {
-        this.userService = userService;
-        this.userRepository = userRepository;
-        this.userMapper = userMapper;
-    }
-    @PostMapping
+     UserService userService;
 
-    public User createUser(@RequestBody @Valid UserCreationRequest request) {
-        if(userRepository.existsByUsername(request.getUsername())) throw new AppException(ErrorCode.USER_EXISITED);
-        User user = userMapper.toUser(request);
-        return userRepository.save(user);
+
+
+    @PostMapping
+    ApiResponse<User> createUser(@RequestBody @Valid UserCreationRequest request) {
+        return ApiResponse.<User>builder()
+                .result(userService.createUser(request))
+                .build();
     }
 
     @GetMapping

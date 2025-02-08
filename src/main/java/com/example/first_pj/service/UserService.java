@@ -25,9 +25,9 @@ public class UserService {
     UserMapper userMapper;
 
 
-    public UserResponse createUser(UserCreationRequest request) {
+    public User createUser (UserCreationRequest request) {
         User user = userMapper.toUser(request);
-        return userMapper.toUserResponse((user));
+        return userRepository.save(user);
     }
 
     public List<User> getuser() {
