@@ -11,6 +11,8 @@ import com.example.first_pj.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,9 +27,13 @@ public class UserService {
     UserMapper userMapper;
 
 
-    public User createUser (UserCreationRequest request) {
+    public UserResponse createUser (UserCreationRequest request) {
+        if(userRepository.existsByUsername(request.getUsername())) throw new AppException(ErrorCode.USER_EXISITED) ;
         User user = userMapper.toUser(request);
-        return userRepository.save(user);
+        PasswordEncoder passwordEncoder= new BCryptPasswordEncoder(10);
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        return userMapper.toUserResponse(userRepository.save(user));
     }
 
     public List<User> getuser() {

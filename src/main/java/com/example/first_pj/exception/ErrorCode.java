@@ -6,7 +6,8 @@ import lombok.Getter;
 public enum ErrorCode
 {
     UNCATEGORIZED_EXCEPTION(9999,"Uncategorized Exception"),
-    USER_EXISITED(1001,"User existed"),
+    INVALID_KEY(1001,"INVALID_KEY"),
+    USER_EXISITED(1002,"User existed"),
     USERNAME_INVALID(1003,"USER INVALID"),
     INVALID_PASSWORD(1004,"INVALID PASSWORD"),
     ;

@@ -18,6 +18,4 @@ public class ApiResponse<T> {
      String message;
      T result;
 
-
-
 }
