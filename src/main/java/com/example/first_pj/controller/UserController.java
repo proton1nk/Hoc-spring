@@ -52,6 +52,12 @@ public class UserController {
         userService.deleteUser(userid);
         return "User has been deleted";
     }
+
+    @RestController
+    public static class AuthenticationController {
+
+
+    }
 }
 
 

@@ -4,7 +4,6 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 @Data
 @Builder
@@ -19,4 +18,13 @@ public class UserUpdateRequest {
      LocalDate birthday;
 
 
+     @Data
+     @AllArgsConstructor
+     @NoArgsConstructor
+     @Builder
+     @FieldDefaults(level = AccessLevel.PRIVATE)
+     public static class AuthenticationRequest {
+         String username;
+         String password;
+     }
 }
