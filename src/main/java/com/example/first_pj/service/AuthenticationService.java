@@ -1,21 +1,29 @@
 package com.example.first_pj.service;
 
 import com.example.first_pj.dto.request.AuthenticationRequest;
+import com.example.first_pj.dto.request.IntrospectRequest;
 import com.example.first_pj.dto.response.AuthenticationResponse;
+import com.example.first_pj.dto.response.IntrospectResponse;
 import com.example.first_pj.exception.AppException;
 import com.example.first_pj.exception.ErrorCode;
 import com.example.first_pj.repository.UserRepository;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -26,9 +34,21 @@ import java.util.Date;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthenticationService {
     UserRepository userRepository;
+    @NonFinal
+    @Value("${jwt.signerkey")
+    protected String SIGN_KEY ;
+    public IntrospectResponse introspectResponse(IntrospectRequest request) throws JOSEException, ParseException {
+        var token = request.getToken();
+        JWSVerifier verifier =new MACVerifier(SIGN_KEY.getBytes());
+        SignedJWT signedJWT = SignedJWT.parse(token);
+        Date ecpiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+        var verified=  signedJWT.verify(verifier);
+        return  IntrospectResponse.builder().
+                valid( verified && ecpiryTime.after(new Date())).
+                build();
 
-    protected static final String SIGN_KEY = "mFNNaXoSTi1a01RTwvDGr1aSkrMro8WWMWekgUI3xOpwXM6cxT5SAhIEr1O2oxss\n";
 
+    }
     public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
         var user = userRepository.findByUsername(authenticationRequest.getUsername())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOTEXISITED));
