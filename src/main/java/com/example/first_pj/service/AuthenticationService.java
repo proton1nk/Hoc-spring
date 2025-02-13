@@ -35,8 +35,8 @@ import java.util.Date;
 public class AuthenticationService {
     UserRepository userRepository;
     @NonFinal
-    @Value("${jwt.signerkey")
-    protected String SIGN_KEY ;
+    @Value("${jwt.signerKey}")
+    protected String SIGN_KEY;
     public IntrospectResponse introspectResponse(IntrospectRequest request) throws JOSEException, ParseException {
         var token = request.getToken();
         JWSVerifier verifier =new MACVerifier(SIGN_KEY.getBytes());
