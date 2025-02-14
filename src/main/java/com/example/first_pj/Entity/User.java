@@ -7,7 +7,8 @@ import jakarta.persistence.Id;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import java.util.UUID;
+
+import java.util.Set;
 import java.time.LocalDate;
 
 
@@ -29,6 +30,7 @@ public class User {
     String lastName;
     String firstName;
     LocalDate birthday;
+    Set<String> roles;
 
 
 }

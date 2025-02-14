@@ -4,6 +4,7 @@ import com.example.first_pj.Entity.User;
 import com.example.first_pj.dto.request.UserCreationRequest;
 import com.example.first_pj.dto.request.UserUpdateRequest;
 import com.example.first_pj.dto.response.UserResponse;
+import com.example.first_pj.enums.Role;
 import com.example.first_pj.exception.AppException;
 import com.example.first_pj.exception.ErrorCode;
 import com.example.first_pj.mapper.UserMapper;
@@ -15,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -22,7 +24,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserService {
 
-
+    PasswordEncoder passwordEncoder;
     UserRepository userRepository;
     UserMapper userMapper;
 
@@ -30,9 +32,11 @@ public class UserService {
     public UserResponse createUser (UserCreationRequest request) {
         if(userRepository.existsByUsername(request.getUsername())) throw new AppException(ErrorCode.USER_EXISITED) ;
         User user = userMapper.toUser(request);
-        PasswordEncoder passwordEncoder= new BCryptPasswordEncoder(10);
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
 
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        HashSet<String> role= new HashSet<>();
+        role.add(Role.USER.name());
+        user.setRoles(role);
         return userMapper.toUserResponse(userRepository.save(user));
     }
 

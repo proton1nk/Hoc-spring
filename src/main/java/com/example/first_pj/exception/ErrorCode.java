@@ -10,7 +10,7 @@ public enum ErrorCode
     USER_EXISITED(1002,"User existed"),
     USERNAME_INVALID(1003,"USER INVALID"),
     INVALID_PASSWORD(1004,"INVALID PASSWORD"),
-    USER_NOTEXISITED(1005,"User existed"),
+    USER_NOTEXISITED(1005," User not existed"),
     UNAUTHENTICATED(1006,"Unathenticated")
 
     ;
