@@ -1,13 +1,12 @@
 package com.example.first_pj.Entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+
+import jakarta.persistence.*;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
 import java.util.Set;
 import java.time.LocalDate;
 
@@ -30,7 +29,8 @@ public class User {
     String lastName;
     String firstName;
     LocalDate birthday;
-    Set<String> roles;
+    @ManyToMany
+    Set<Role> roles;
 
 
 }

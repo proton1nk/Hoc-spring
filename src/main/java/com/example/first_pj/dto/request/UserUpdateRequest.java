@@ -1,9 +1,11 @@
 package com.example.first_pj.dto.request;
 
+import com.example.first_pj.Entity.Role;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @Builder
@@ -17,14 +19,7 @@ public class UserUpdateRequest {
      String firstName;
      LocalDate birthday;
 
+    List<String> roles;
 
-     @Data
-     @AllArgsConstructor
-     @NoArgsConstructor
-     @Builder
-     @FieldDefaults(level = AccessLevel.PRIVATE)
-     public static class AuthenticationRequest {
-         String username;
-         String password;
-     }
+
 }

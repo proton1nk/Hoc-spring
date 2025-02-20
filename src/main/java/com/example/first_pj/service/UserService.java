@@ -8,6 +8,7 @@ import com.example.first_pj.enums.Role;
 import com.example.first_pj.exception.AppException;
 import com.example.first_pj.exception.ErrorCode;
 import com.example.first_pj.mapper.UserMapper;
+import com.example.first_pj.repository.RoleRepository;
 import com.example.first_pj.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +33,7 @@ public class UserService {
     PasswordEncoder passwordEncoder;
     UserRepository userRepository;
     UserMapper userMapper;
-
+    RoleRepository roleRepository;
 
     public UserResponse createUser (UserCreationRequest request) {
         if(userRepository.existsByUsername(request.getUsername())) throw new AppException(ErrorCode.USER_EXISITED) ;
@@ -41,7 +42,7 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         HashSet<String> role= new HashSet<>();
         role.add(Role.USER.name());
-        user.setRoles(role);
+        //user.setRoles(role);
         return userMapper.toUserResponse(userRepository.save(user));
     }
     public UserResponse getMyInfo ()
@@ -68,6 +69,9 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_EXISITED));
         userMapper.updateUser(user, request);
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        var roles = roleRepository.findAllById(request.getRoles());
+        user.setRoles(new HashSet<>(roles));
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
