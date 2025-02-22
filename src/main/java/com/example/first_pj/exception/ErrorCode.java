@@ -14,8 +14,8 @@ public enum ErrorCode
     INVALID_PASSWORD(1004,"INVALID PASSWORD",HttpStatus.BAD_REQUEST),
     USER_NOTEXISITED(1005," User not existed",HttpStatus.NOT_FOUND),
     UNAUTHENTICATED(1006,"Unathenticated",HttpStatus.UNAUTHORIZED),
-    UNAUTHORIZED(1007,"You dont have permission ",HttpStatus.FORBIDDEN)
-
+    UNAUTHORIZED(1007,"You dont have permission ",HttpStatus.FORBIDDEN),
+    INVALID_DOB (1008,"You dont elder enough",HttpStatus.UNAUTHORIZED)
     ;
 
     ErrorCode(int code, String message,HttpStatusCode httpStatusCode) {
