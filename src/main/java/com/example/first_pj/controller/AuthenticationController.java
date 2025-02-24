@@ -3,6 +3,7 @@ package com.example.first_pj.controller;
 import com.example.first_pj.dto.ApiResponse;
 import com.example.first_pj.dto.request.AuthenticationRequest;
 import com.example.first_pj.dto.request.IntrospectRequest;
+import com.example.first_pj.dto.request.LogoutRequest;
 import com.example.first_pj.dto.response.AuthenticationResponse;
 import com.example.first_pj.dto.response.IntrospectResponse;
 import com.example.first_pj.service.AuthenticationService;
@@ -16,8 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.text.ParseException;
-
-import static java.util.stream.DoubleStream.builder;
 
 @RestController
 @RequestMapping("/auth")
@@ -34,9 +33,15 @@ public class AuthenticationController {
     }
     @PostMapping("/introspect")
     ApiResponse<IntrospectResponse> authenticated(@RequestBody IntrospectRequest introspectRequest) throws ParseException, JOSEException {
-        var result = authenticationService.introspectResponse(introspectRequest);
+        var result = authenticationService.introspect(introspectRequest);
         return ApiResponse.<IntrospectResponse>builder()
                 .result(result)
+                .build();
+    }
+    @PostMapping("/logout")
+    ApiResponse<Void> logout(@RequestBody LogoutRequest request) throws ParseException, JOSEException {
+     authenticationService.logout(request);
+        return ApiResponse.<Void>builder()
                 .build();
     }
 
