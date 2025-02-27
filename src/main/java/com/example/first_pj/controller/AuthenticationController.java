@@ -4,6 +4,7 @@ import com.example.first_pj.dto.ApiResponse;
 import com.example.first_pj.dto.request.AuthenticationRequest;
 import com.example.first_pj.dto.request.IntrospectRequest;
 import com.example.first_pj.dto.request.LogoutRequest;
+import com.example.first_pj.dto.request.RefreshRequest;
 import com.example.first_pj.dto.response.AuthenticationResponse;
 import com.example.first_pj.dto.response.IntrospectResponse;
 import com.example.first_pj.service.AuthenticationService;
@@ -31,6 +32,14 @@ public class AuthenticationController {
                 .result(result)
                 .build();
     }
+    @PostMapping("/refresh")
+    ApiResponse<AuthenticationResponse> authenticated(@RequestBody RefreshRequest request) throws ParseException, JOSEException {
+        var result = authenticationService.refreshToken(request);
+        return ApiResponse.<AuthenticationResponse>builder()
+                .result(result)
+                .build();
+    }
+
     @PostMapping("/introspect")
     ApiResponse<IntrospectResponse> authenticated(@RequestBody IntrospectRequest introspectRequest) throws ParseException, JOSEException {
         var result = authenticationService.introspect(introspectRequest);
@@ -39,8 +48,9 @@ public class AuthenticationController {
                 .build();
     }
     @PostMapping("/logout")
-    ApiResponse<Void> logout(@RequestBody LogoutRequest request) throws ParseException, JOSEException {
-     authenticationService.logout(request);
+    ApiResponse<Void> logout(@RequestBody LogoutRequest request)
+            throws ParseException, JOSEException {
+        authenticationService.logout(request);
         return ApiResponse.<Void>builder()
                 .build();
     }

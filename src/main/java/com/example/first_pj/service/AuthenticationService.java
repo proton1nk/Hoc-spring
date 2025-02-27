@@ -5,6 +5,7 @@ import com.example.first_pj.Entity.User;
 import com.example.first_pj.dto.request.AuthenticationRequest;
 import com.example.first_pj.dto.request.IntrospectRequest;
 import com.example.first_pj.dto.request.LogoutRequest;
+import com.example.first_pj.dto.request.RefreshRequest;
 import com.example.first_pj.dto.response.AuthenticationResponse;
 import com.example.first_pj.dto.response.IntrospectResponse;
 import com.example.first_pj.exception.AppException;
@@ -31,6 +32,7 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.UUID;
 
@@ -96,17 +98,32 @@ public class AuthenticationService {
             throw new RuntimeException(e);
         }
     }
-    public void logout( LogoutRequest request) throws ParseException, JOSEException {
+    public AuthenticationResponse refreshToken (RefreshRequest request ) throws ParseException, JOSEException {
+        var signJWT= verifyToken(request.getToken());
+        var jit = signJWT.getJWTClaimsSet().getJWTID();
+        var expiryTime = signJWT.getJWTClaimsSet().getExpirationTime();
+        var username = signJWT.getJWTClaimsSet().getSubject();
+        var user= userRepository.findByUsername(username).orElseThrow(()->  new AppException(ErrorCode.USER_NOTEXISITED));
+        var token = generateToken(user);
 
+        return AuthenticationResponse.builder()
+                .token(token)
+                .Authenticated(true)
+                .build();
+
+    }
+    public void logout(LogoutRequest request) throws ParseException, JOSEException {
         var signToken = verifyToken(request.getToken());
-        String jit=signToken.getJWTClaimsSet().getJWTID();
+
+        String jit = signToken.getJWTClaimsSet().getJWTID();
         Date expiryTime = signToken.getJWTClaimsSet().getExpirationTime();
-        InvalidatedToken invalidatedToken =new InvalidatedToken().builder()
+
+        InvalidatedToken invalidatedToken = InvalidatedToken.builder()
                 .id(jit)
                 .expiryTime(expiryTime)
                 .build();
-        InvalidatedTokenRepository.save(invalidatedToken);
 
+        InvalidatedTokenRepository.save(invalidatedToken);
     }
     private SignedJWT verifyToken(String token) throws JOSEException, ParseException {
         JWSVerifier verifier =new MACVerifier(SIGN_KEY.getBytes());

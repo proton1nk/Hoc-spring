@@ -1,6 +1,7 @@
 package com.example.first_pj.configuration;
 
-import com.example.first_pj.enums.Role;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,19 +28,18 @@ import javax.crypto.spec.SecretKeySpec;
 public class SecurityConfig {
 
     public final String[]PUBLIC_ENDPOINT={"/users","/auth/token","/auth/introspect","auth/logout"};
-        @Value("${jwt.signerKey}")
-        private String signerKey;
+        @Autowired
+        private CustomJwtDecoder customJwtDecoder;
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
             http.authorizeHttpRequests(request ->
                     request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINT).permitAll()
-
                             .anyRequest().
                             authenticated());
             // Chi co admin moi co the lay tat ca
             http.oauth2ResourceServer(oauth2 ->
                     oauth2.jwt(jwtConfigurer ->
-                        jwtConfigurer.decoder(jwtDecoder())
+                        jwtConfigurer.decoder(customJwtDecoder)
                                 .jwtAuthenticationConverter(jwtAuthenticationConverter()))
                         .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
             );
@@ -50,22 +50,16 @@ public class SecurityConfig {
         // ERROR 401 kh the  xu li o GEH vi no nam tren cac filter truoc khi vao service khac 403
 
         @Bean
-    JwtAuthenticationConverter jwtAuthenticationConverter()
-        {
-            JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter= new JwtGrantedAuthoritiesConverter();
-            jwtGrantedAuthoritiesConverter.setAuthorityPrefix("");
-            JwtAuthenticationConverter jwtAuthenticationConverter =new JwtAuthenticationConverter();
-            jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
-            return  jwtAuthenticationConverter;
-        }
-        @Bean
-    JwtDecoder jwtDecoder(){
-            SecretKeySpec secretKeySpec= new SecretKeySpec(signerKey.getBytes(),"HS512");
-          return NimbusJwtDecoder.
-                  withSecretKey(secretKeySpec).
-                  macAlgorithm(MacAlgorithm.HS512).build();
+        JwtAuthenticationConverter jwtAuthenticationConverter(){
+        JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("");
 
-        };
+        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
+
+        return jwtAuthenticationConverter;
+        }
+
         @Bean
         PasswordEncoder passwordEncoder()
         {
