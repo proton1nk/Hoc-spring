@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import org.springframework.boot.test.context.TestConfiguration;
+
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -27,7 +27,7 @@ import java.time.LocalDate;
 @AutoConfigureMockMvc
 @SpringBootTest
 @TestPropertySource("/test.properties")
-public class UserControlTest {
+public class UserControllerTest {
 
     @Autowired
     private MockMvc Mockmvc;
@@ -82,12 +82,12 @@ public class UserControlTest {
         String content = objectMapper.writeValueAsString(request);
 
         Mockmvc.perform(MockMvcRequestBuilders.post("/users")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(content))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(content))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("code").value(1003))
                 .andExpect(MockMvcResultMatchers.jsonPath("message").value("Username must be at least 4 characters")
-    );
+                );
 
     }
 }

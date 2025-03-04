@@ -10,13 +10,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.time.LocalDate;
-import static org.assertj.core.api.Assertions.assertThat;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -24,7 +23,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @TestPropertySource("/test.properties")
-public class UserServiceTest {
+public class UserServiceTEst {
     @Autowired
     private UserService userService;
     @MockitoBean
@@ -86,5 +85,4 @@ public class UserServiceTest {
         // THEN
         assertThat(exception.getErrorcode().getCode()).isEqualTo(1002);
     }
-
 }
