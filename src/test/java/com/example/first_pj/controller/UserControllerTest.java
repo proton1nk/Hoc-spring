@@ -15,6 +15,11 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> ca9919d166fae06388d0dd0162dd8c0007f2b141
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -83,6 +88,7 @@ public class UserControllerTest {
         objectMapper.registerModule(new JavaTimeModule());
         String content = objectMapper.writeValueAsString(request);
 
+<<<<<<< HEAD
         Mockmvc.perform(
                         MockMvcRequestBuilders.post("/users")
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -92,5 +98,15 @@ public class UserControllerTest {
                 .andExpect(
                         MockMvcResultMatchers.jsonPath("message")
                                 .value("Username must be at least 4 characters"));
+=======
+        Mockmvc.perform(MockMvcRequestBuilders.post("/users")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(content))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("code").value(1003))
+                .andExpect(MockMvcResultMatchers.jsonPath("message").value("Username must be at least 4 characters")
+                );
+
+>>>>>>> ca9919d166fae06388d0dd0162dd8c0007f2b141
     }
 }

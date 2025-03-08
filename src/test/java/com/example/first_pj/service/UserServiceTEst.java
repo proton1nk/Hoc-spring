@@ -20,9 +20,55 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
+<<<<<<< HEAD:src/test/java/com/example/first_pj/service/UserServiceTest.java
 @SpringBootTest
 @TestPropertySource("/test.properties")
 public class UserServiceTest {
+=======
+import java.time.LocalDate;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+
+@SpringBootTest
+@TestPropertySource("/test.properties")
+public class UserServiceTEst {
+    @Autowired
+    private UserService userService;
+    @MockitoBean
+    private UserRepository userRepository;
+    private UserCreationRequest request;
+    private UserResponse userResponse;
+    private User user;
+    private LocalDate dob;
+    @BeforeEach
+    void init_Data() {
+        dob = LocalDate.of(2005, 1, 6);
+        request = UserCreationRequest.builder()
+                .lastName("Nguyen")
+                .firstName("Khai")
+                .password("12345678")
+                .username("Khai")
+                .birthday(dob)
+                .build();
+        userResponse = UserResponse.builder()
+                .id("cf345b4630d")
+                .lastName("Nguyen")
+                .firstName("Khai")
+                .username("Khai")
+                .birthday(dob)
+                .build();
+        user = User.builder()
+                .id("cf345b4630d")
+                .lastName("Nguyen")
+                .firstName("Khai")
+                .username("Khai")
+                .birthday(dob)
+                .build();
+>>>>>>> ca9919d166fae06388d0dd0162dd8c0007f2b141:src/test/java/com/example/first_pj/service/UserServiceTEst.java
 
     @Autowired UserService userService;
 
