@@ -1,10 +1,11 @@
 package com.example.first_pj.service;
 
+import com.example.first_pj.Entity.Role;
 import com.example.first_pj.Entity.User;
+import com.example.first_pj.constrant.PredefineRole;
 import com.example.first_pj.dto.request.UserCreationRequest;
 import com.example.first_pj.dto.request.UserUpdateRequest;
 import com.example.first_pj.dto.response.UserResponse;
-import com.example.first_pj.enums.Role;
 import com.example.first_pj.exception.AppException;
 import com.example.first_pj.exception.ErrorCode;
 import com.example.first_pj.mapper.UserMapper;
@@ -17,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -41,9 +41,10 @@ public class UserService {
         User user = userMapper.toUser(request);
 
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        HashSet<String> role= new HashSet<>();
-        role.add(Role.USER.name());
-        //user.setRoles(role);
+        HashSet<Role> role= new HashSet<>();
+        // add quye user cho user
+        roleRepository.findById(PredefineRole.USER_ROLE).ifPresent(role::add);
+        user.setRoles(role);
         return userMapper.toUserResponse(userRepository.save(user));
     }
     public UserResponse getMyInfo ()
