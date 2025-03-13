@@ -23,7 +23,8 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
-
+    //Set uni cho username de khi post nhieu username 1 luc kh co tinh trang bi loi
+    @Column(name = "username", unique = true, columnDefinition = "VARCHAR(255) COLLATE utf8mb4_unicode_ci")
     String username;
     String password;
     String lastName;

@@ -15,6 +15,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,30 +36,36 @@ public class UserService {
     UserMapper userMapper;
     RoleRepository roleRepository;
 
-    public UserResponse createUser (UserCreationRequest request) {
-        log.info("User Service Create" );
-        if(userRepository.existsByUsername(request.getUsername())) throw new AppException(ErrorCode.USER_EXISITED) ;
+    public UserResponse createUser(UserCreationRequest request) {
         User user = userMapper.toUser(request);
 
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        HashSet<Role> role= new HashSet<>();
-        // add quye user cho user
+        HashSet<Role> role = new HashSet<>();
+        // add quyen user cho user
         roleRepository.findById(PredefineRole.USER_ROLE).ifPresent(role::add);
         user.setRoles(role);
+        //Khong can check truoc nua chi can throw Exception thanh UserExisted
+        try {
+            userRepository.save(user);
+        } catch (DataIntegrityViolationException e) {
+            throw new AppException(ErrorCode.USER_EXISITED);
+        }
         return userMapper.toUserResponse(userRepository.save(user));
     }
-    public UserResponse getMyInfo ()
-    {
-       var context = SecurityContextHolder.getContext();
-       String name = context.getAuthentication().getName();
-       User user  = userRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.USER_NOTEXISITED));
-       return userMapper.toUserResponse(user);
+
+    public UserResponse getMyInfo() {
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        User user = userRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.USER_NOTEXISITED));
+        return userMapper.toUserResponse(user);
     }
+
     @PreAuthorize("hasRole('ADMIN')")
     public List<UserResponse> getuser() {
         log.info("In get User method");
         return userRepository.findAll().stream().map(userMapper::toUserResponse).toList();
     }
+
     @PostAuthorize("returnObject.username== authentication.name || hasRole('ADMIN') ")
     public UserResponse getUser(String id) {
         log.info("In method get User Id");
